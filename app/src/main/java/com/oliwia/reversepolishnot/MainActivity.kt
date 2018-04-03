@@ -15,16 +15,20 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import com.oliwia.reversepolishnot.R.menu.mymenu
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
 
     val REQUEST_CODE = 10000
 
-    val stack:Stack = Stack()
-    var lastElem:String = ""
+    var stack:Stack = Stack(LinkedList<Double>(), 4)
+    var lastElem:String = "0"
     var colorInt:Int = android.graphics.Color.rgb(255, 255, 255)
     var precision:Int = 4
+
+    var previousStack: Stack = Stack(LinkedList<Double>(), 4)
+    var previousLastElem: String = "0"
 
     fun updateStr(){
         stackText.text = stack.strStack + lastElem
@@ -65,6 +69,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 if(data.hasExtra("precision")){
                     precision = data.extras.getString("precision").toInt()
+                    stack.precision = precision
+                    updateStr()
                 }
             }
         }
@@ -73,14 +79,12 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.settings -> {
-                // Action goes here
                 showActivity()
                 true
             }
 
             R.id.about -> {
                 Toast.makeText(this, "Oliwia Masian\n127324", Toast.LENGTH_LONG).show()
-                // Action goes here
                 true
             }
 
@@ -91,6 +95,7 @@ class MainActivity : AppCompatActivity() {
 
 
     fun changeSign(v: View){
+        saveInstance()
         if(lastElem.equals("0")){
             return;
         }
@@ -103,6 +108,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun swap(v: View){
+        saveInstance()
         stack.push(lastElem.toDouble()) // TODO wyjatek?
         stack.swap()
         lastElem = stack.pop().toString()
@@ -110,9 +116,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun drop(v: View){
-        stack.pop()
+        saveInstance()
+        lastElem = stack.pop().toString()
         updateStr()
     }
+
+    fun emptyStack(v: View){
+        saveInstance()
+        stack.emptyStack()
+        lastElem = "0"
+        updateStr()
+    }
+
+    fun saveInstance(){
+        previousLastElem = lastElem
+        previousStack = stack.copy()
+    }
+
+    fun undo(v: View){
+        lastElem = previousLastElem
+        stack = previousStack
+        updateStr()
+    }
+
 
     fun click(v: View){
         // TODO C gdy -<nic>
@@ -139,7 +165,7 @@ class MainActivity : AppCompatActivity() {
             lastElem = newString
 
         }catch(ex: NumberFormatException){
-            if(newString == ""){
+            if(newString == "" || newString == "-"){
                 lastElem = "0"
             }
         }
@@ -150,6 +176,7 @@ class MainActivity : AppCompatActivity() {
     // TODO jak po enter nie ma enter/dzialania, tylko cyfra, to wykasowac stringa poprzedniego
 
     fun push(v: View){
+        saveInstance()
         try{
             var number = lastElem.toDouble()
             stack.push(number)
@@ -159,7 +186,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
+    fun sqrt(v: View){
+        saveInstance()
+        try{
+            var number = lastElem.toDouble()
+
+            var wynik: Double
+            wynik = Math.sqrt(number)
+
+            if(wynik.isNaN() || wynik.isInfinite()){
+                Toast.makeText(this, "Nie można oblczyć pierwiastka z ujemnej liczby! Operacja anulowana!", Toast.LENGTH_LONG).show()
+            } else{
+                lastElem = wynik.toString()
+            }
+            updateStr()
+
+        }catch(ex: NumberFormatException){
+            Toast.makeText(this, "Niepoprawny format ostatniej liczby na stosie, operacja anulowana!", Toast.LENGTH_LONG).show()
+        }
+
+    }
+
     fun calTwoOperands(v: View){
+        saveInstance()
         try{
             var number = lastElem.toDouble()
             stack.push(number)
@@ -175,16 +226,14 @@ class MainActivity : AppCompatActivity() {
                 R.id.buttonMINUS -> wynik = arg1 - arg2
                 R.id.buttonMULTIPLY -> wynik = arg1 * arg2
                 R.id.buttonPOW -> wynik = Math.pow(arg1, arg2)
+                R.id.buttonDIVIDE -> wynik = arg1/arg2
             }
-            if(v.id == R.id.buttonDIVIDE){
-                wynik = arg1/arg2
-                if(wynik.isNaN()){
-                    Toast.makeText(this, "Nie wolno dzielić przez 0! Ustawiam wynik na 0.0", Toast.LENGTH_LONG).show()
-                    wynik = 0.0
-                }
+            if(wynik.isNaN() || wynik.isInfinite()){
+                Toast.makeText(this, "Nie wolno dzielić przez 0! Operacja anulowana!", Toast.LENGTH_LONG).show()
+                stack.push(arg1)
+            } else{
+                lastElem = wynik.toString()
             }
-
-            lastElem = wynik.toString()
             updateStr()
 
         }catch(ex: NumberFormatException){

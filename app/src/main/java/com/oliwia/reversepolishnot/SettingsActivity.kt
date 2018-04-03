@@ -39,7 +39,7 @@ class SettingsActivity : AppCompatActivity() {
     override fun finish() {
         val data = Intent()
         data.putExtra("colorInt", colorInt.toString())
-        data.putExtra("precison", numberPicker.value.toString())
+        data.putExtra("precision", numberPicker.value.toString())
         setResult(Activity.RESULT_OK, data)
         super.finish()
     }
