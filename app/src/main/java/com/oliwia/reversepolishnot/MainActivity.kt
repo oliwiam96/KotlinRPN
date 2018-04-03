@@ -15,6 +15,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import com.oliwia.reversepolishnot.R.menu.mymenu
+import java.io.Serializable
 import java.util.*
 
 
@@ -26,7 +27,6 @@ class MainActivity : AppCompatActivity() {
     var lastElem:String = "0"
     var colorInt:Int = android.graphics.Color.rgb(255, 255, 255)
     var precision:Int = 4
-
     var previousStack: Stack = Stack(LinkedList<Double>(), 4)
     var previousLastElem: String = "0"
 
@@ -39,8 +39,26 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         if(savedInstanceState!= null){
-            lastElem =savedInstanceState.getString("param") ?: ""
-            lastElem = "0" // UWAGA!  ODKOMENTOWAĆ
+
+            lastElem =savedInstanceState.getString("lastElem") ?: "0"
+            previousLastElem =savedInstanceState.getString("previousLastElem") ?: "0"
+            colorInt =savedInstanceState.getInt("colorInt") ?: android.graphics.Color.rgb(255, 255, 255)
+            precision =savedInstanceState.getInt("precision") ?: 4
+
+            //stack = Stack(LinkedList<Double>(savedInstanceState.getDoubleArray("stackDouble").toList() as LinkedList<Double>),
+            //        savedInstanceState.getInt("stackPrecision"))
+
+            /*
+            stack =  savedInstanceState.getSerializable("stack") as Stack
+            previousStack = savedInstanceState.getSerializable("previousStack") as Stack
+            */
+
+            stackText.setBackgroundColor(colorInt)
+            stack.precision = precision
+            updateStr()
+
+
+            //lastElem = "0" // UWAGA!  ODKOMENTOWAĆ
         } else{
             lastElem = "0"
         }
@@ -244,7 +262,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle?) {
+
+        var stack:Stack = Stack(LinkedList<Double>(), 4)
+        var previousStack: Stack = Stack(LinkedList<Double>(), 4)
+
+
         super.onSaveInstanceState(savedInstanceState)
-        savedInstanceState!!.putString("param", stackText.text.toString())
+        savedInstanceState!!.putString("lastElem", lastElem)
+        savedInstanceState!!.putString("previousLastElem", previousLastElem)
+        savedInstanceState!!.putInt("precision", precision)
+        savedInstanceState!!.putInt("colorInt", colorInt)
+        /*savedInstanceState!!.putSerializable("stack", stack)
+        savedInstanceState!!.putSerializable("previousStack", previousStack)*/
+        savedInstanceState!!.putDoubleArray("stackDouble", stack.stack.toDoubleArray())
+        savedInstanceState!!.putInt("stackPrecision", stack.precision)
+
+
+
     }
 }

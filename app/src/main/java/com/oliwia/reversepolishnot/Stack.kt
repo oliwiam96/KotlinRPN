@@ -1,12 +1,13 @@
 package com.oliwia.reversepolishnot
 
+import java.io.Serializable
 import java.util.LinkedList
 
 /**
  * Created by Oliwia on 26.03.2018.
  */
 
-class Stack{
+class Stack : Serializable{
     var stack = LinkedList<Double>()
     var precision:Int = 4
 
@@ -15,9 +16,6 @@ class Stack{
         this.precision = precision
     }
 
-    constructor(){
-
-    }
 
 
     fun Double.format(digits: Int) = java.lang.String.format("%.${digits}f", this)
