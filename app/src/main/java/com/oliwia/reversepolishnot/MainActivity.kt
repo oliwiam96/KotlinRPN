@@ -10,10 +10,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Toast
+import com.oliwia.reversepolishnot.R.menu.mymenu
 
 
 class MainActivity : AppCompatActivity() {
+
+    val REQUEST_CODE = 10000
 
     val stack:Stack = Stack()
     var lastElem:String = ""
@@ -34,6 +40,48 @@ class MainActivity : AppCompatActivity() {
         }
         updateStr()
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.mymenu, menu)
+        return true
+    }
+
+    fun showActivity(){
+        val i = Intent(this, SettingsActivity::class.java)
+        i.putExtra("Parametr", "Twoje dane")
+        startActivityForResult(i, REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if((requestCode == REQUEST_CODE)
+                && (resultCode == Activity.RESULT_OK)){
+            if(data != null){
+                if(data.hasExtra("returnString1")){
+                    //statusText.text = data.extras.getString("returnString1")
+                }
+            }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.settings -> {
+                // Action goes here
+                showActivity()
+                true
+            }
+
+            R.id.about -> {
+                Toast.makeText(this, "Oliwia Masian\n127324", Toast.LENGTH_LONG).show()
+                // Action goes here
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+
 
     fun changeSign(v: View){
         if(lastElem.equals("0")){

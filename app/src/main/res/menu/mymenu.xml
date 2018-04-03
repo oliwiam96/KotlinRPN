@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.oliwia.reversepolishnot.MainActivity">
+    <item
+        android:icon="@drawable/ic_action_overflow"
+        android:title=""
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/settings"
+                android:icon="@android:drawable/ic_menu_preferences"
+                android:title="Settings"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/about"
+                android:icon="@drawable/about_school"
+                android:title="About"
+                app:showAsAction="never" />
+
+
+        </menu>
+    </item>
+</menu>
