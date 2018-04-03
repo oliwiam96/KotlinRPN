@@ -8,6 +8,9 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_settings.*
 import android.widget.RadioButton
+import android.widget.NumberPicker
+
+
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -21,14 +24,22 @@ class SettingsActivity : AppCompatActivity() {
 
         val extras = intent.extras ?: return
         val message = extras.getString("Parametr")
-        statusText.text = message
         white.isChecked = true
+        //Set the minimum value of NumberPicker
+        numberPicker.minValue = 1
+        //Specify the maximum value/number of NumberPicker
+        numberPicker.maxValue = 7
+        //Gets whether the selector wheel wraps when reaching the min/max value.
+        numberPicker.wrapSelectorWheel = true
+        numberPicker.value = 4
+
 
     }
 
     override fun finish() {
         val data = Intent()
         data.putExtra("colorInt", colorInt.toString())
+        data.putExtra("precison", numberPicker.value.toString())
         setResult(Activity.RESULT_OK, data)
         super.finish()
     }
@@ -41,8 +52,6 @@ class SettingsActivity : AppCompatActivity() {
         when (view.getId()) {
             R.id.blue -> {
                 if (checked) {
-                    // Pirates are the best
-                    statusText.text = "Blue"
                     colorInt = android.graphics.Color.rgb(167, 255, 235)
                     view.rootView.setBackgroundColor(colorInt)
                 }
@@ -50,7 +59,6 @@ class SettingsActivity : AppCompatActivity() {
             }
             R.id.gray -> {
                 if (checked) {
-                    statusText.text = "Gray"
                     colorInt = android.graphics.Color.LTGRAY
                     view.rootView.setBackgroundColor(colorInt)
                 }
@@ -59,7 +67,6 @@ class SettingsActivity : AppCompatActivity() {
             }
             R.id.orange -> {
                 if (checked) {
-                    statusText.text = "Orange"
                     colorInt = android.graphics.Color.rgb(253, 214, 170)
                     view.rootView.setBackgroundColor(colorInt)
                 }
@@ -67,7 +74,6 @@ class SettingsActivity : AppCompatActivity() {
             }
             R.id.green -> {
                 if (checked) {
-                    statusText.text = "Green"
                     colorInt = android.graphics.Color.rgb(190, 241, 139)
                     view.rootView.setBackgroundColor(colorInt)
                 }
@@ -75,7 +81,6 @@ class SettingsActivity : AppCompatActivity() {
             }
             R.id.white -> {
                 if (checked) {
-                    statusText.text = "White"
                     colorInt = android.graphics.Color.rgb(255, 255, 255)
                     view.rootView.setBackgroundColor(colorInt)
                 }

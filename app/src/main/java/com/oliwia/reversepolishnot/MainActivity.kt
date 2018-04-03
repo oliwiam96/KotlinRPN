@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     val stack:Stack = Stack()
     var lastElem:String = ""
     var colorInt:Int = android.graphics.Color.rgb(255, 255, 255)
+    var precision:Int = 4
 
     fun updateStr(){
         stackText.text = stack.strStack + lastElem
@@ -61,6 +62,9 @@ class MainActivity : AppCompatActivity() {
                 if(data.hasExtra("colorInt")){
                     colorInt =  data.extras.getString("colorInt").toInt()
                     stackText.setBackgroundColor(colorInt)
+                }
+                if(data.hasExtra("precision")){
+                    precision = data.extras.getString("precision").toInt()
                 }
             }
         }
