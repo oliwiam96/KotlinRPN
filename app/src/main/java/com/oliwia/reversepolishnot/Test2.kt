@@ -5,14 +5,15 @@ import java.util.LinkedList
 /**
  * Created by Oliwia on 26.03.2018.
  */
-class Stack{
+
+class Test2 {
     private val stack = LinkedList<Double>()
 
     val strStack: String
         get() {
             var strStack = ""
             for (i in 3 downTo 1) {
-                if (stack.size >= i) {
+                if (stack.size >= 3) {
                     strStack += (i + 1).toString() + ": " + stack[i - 1] + "\n"
                 } else {
                     strStack += (i + 1).toString() + ": 0.0\n"
@@ -22,7 +23,7 @@ class Stack{
             return strStack
         }
 
-    fun pop():Double{
+    fun pop(): Double? {
         if (stack.size > 0) {
             return stack.pop()
         } else {
@@ -34,11 +35,5 @@ class Stack{
         stack.push(elem)
     }
 
-    fun swap(){
-        var elem1 = this.pop()
-        var elem2 = this.pop()
-        this.push(elem1)
-        this.push(elem2)
-    }
 
 }

@@ -16,50 +16,79 @@ import android.widget.Toast
 class MainActivity : AppCompatActivity() {
 
     val stack:Stack = Stack()
+    var lastElem:String = ""
+
+    fun updateStr(){
+        stackText.text = stack.strStack + lastElem
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         if(savedInstanceState!= null){
-            stackText.text =savedInstanceState.getString("param") ?: ""
-            stackText.text = "0" // UWAGA!  ODKOMENTOWAĆ
+            lastElem =savedInstanceState.getString("param") ?: ""
+            lastElem = "0" // UWAGA!  ODKOMENTOWAĆ
         } else{
-            stackText.text = "0"
+            lastElem = "0"
         }
-
-
+        updateStr()
     }
 
-        fun click(v: View){
-        //stackText.text = "Klik!"
+    fun changeSign(v: View){
+        if(lastElem.equals("0")){
+            return;
+        }
+        else if(lastElem[0] == '-'){ // change to +
+            lastElem = lastElem.substring(1, lastElem.length)
+        } else{ // change to -
+            lastElem = '-' +  lastElem
+        }
+        updateStr()
+    }
+
+    fun swap(v: View){
+        stack.push(lastElem.toDouble()) // TODO wyjatek?
+        stack.swap()
+        lastElem = stack.pop().toString()
+        updateStr()
+    }
+
+    fun drop(v: View){
+        stack.pop()
+        updateStr()
+    }
+
+    fun click(v: View){
+        // TODO C gdy -<nic>
         var newString = ""
         when(v.id){
-            R.id.button0 -> newString = stackText.text.toString() + "0"
-            R.id.button1 -> newString = stackText.text.toString() + "1"
-            R.id.button2 -> newString = stackText.text.toString() + "2"
-            R.id.button3 -> newString = stackText.text.toString() + "3"
-            R.id.button4 -> newString = stackText.text.toString() + "4"
-            R.id.button5 -> newString = stackText.text.toString() + "5"
-            R.id.button6 -> newString = stackText.text.toString() + "6"
-            R.id.button7 -> newString = stackText.text.toString() + "7"
-            R.id.button8 -> newString = stackText.text.toString() + "8"
-            R.id.button9 -> newString = stackText.text.toString() + "9"
-            R.id.buttonDOT -> newString = stackText.text.toString() + "."
-            R.id.buttonC -> newString = stackText.text.toString().substring(0, stackText.text.toString().length - 1)
+            R.id.button0 -> newString = lastElem + "0"
+            R.id.button1 -> newString = lastElem + "1"
+            R.id.button2 -> newString = lastElem + "2"
+            R.id.button3 -> newString = lastElem + "3"
+            R.id.button4 -> newString = lastElem + "4"
+            R.id.button5 -> newString = lastElem + "5"
+            R.id.button6 -> newString = lastElem + "6"
+            R.id.button7 -> newString = lastElem + "7"
+            R.id.button8 -> newString = lastElem + "8"
+            R.id.button9 -> newString = lastElem + "9"
+            R.id.buttonDOT -> newString = lastElem + "."
+            R.id.buttonC -> newString = lastElem.substring(0, lastElem.length - 1)
         }
         try{
-            var number = newString.toDouble()
+            newString.toDouble()
             if(newString.length > 1 && newString[0] == '0' && newString[1] != '.'){
-                newString = newString.substring(1, newString.length)
+                newString = newString.substring(1, newString.length) //delete first zero
             }
-            stackText.text = newString
+            lastElem = newString
 
         }catch(ex: NumberFormatException){
             if(newString == ""){
-                stackText.text = "0"
+                lastElem = "0"
             }
         }
+        updateStr()
     }
 
     // TODO funkcja, ktora bedzie probowala wrzucic na stos- uwzglednic -<nic>, -liczba
@@ -67,37 +96,47 @@ class MainActivity : AppCompatActivity() {
 
     fun push(v: View){
         try{
-            var number = stackText.text.toString().toDouble()
+            var number = lastElem.toDouble()
             stack.push(number)
+            updateStr()
         }catch(ex: NumberFormatException){
-
+            Toast.makeText(this, "Niepoprawny format ostatniej liczby na stosie, operacja anulowana!", Toast.LENGTH_LONG).show()
         }
     }
 
     fun calTwoOperands(v: View){
+        try{
+            var number = lastElem.toDouble()
+            stack.push(number)
 
-        var arg2 = stack.pop()
-        var arg1 = stack.pop()
+            var arg2 = stack.pop()
+            var arg1 = stack.pop()
 
-        var wynik: Double
-        wynik = 0.0
+            var wynik: Double
+            wynik = 0.0
 
-        when(v.id){
-            R.id.buttonPLUS -> wynik = arg1 + arg2
-            R.id.buttonMINUS -> wynik = arg1 - arg2
-            R.id.buttonMULTIPLY -> wynik = arg1 * arg2
-            R.id.buttonPOW -> wynik = Math.pow(arg1, arg2)
-        }
-        if(v.id == R.id.buttonDIVIDE){
-            wynik = arg1/arg2
-            if(wynik.isNaN()){
-                Toast.makeText(this, "Nie wolno dzielić przez 0!", Toast.LENGTH_LONG).show()
-                wynik = 0.0
+            when(v.id){
+                R.id.buttonPLUS -> wynik = arg1 + arg2
+                R.id.buttonMINUS -> wynik = arg1 - arg2
+                R.id.buttonMULTIPLY -> wynik = arg1 * arg2
+                R.id.buttonPOW -> wynik = Math.pow(arg1, arg2)
             }
+            if(v.id == R.id.buttonDIVIDE){
+                wynik = arg1/arg2
+                if(wynik.isNaN()){
+                    Toast.makeText(this, "Nie wolno dzielić przez 0! Ustawiam wynik na 0.0", Toast.LENGTH_LONG).show()
+                    wynik = 0.0
+                }
+            }
+
+            lastElem = wynik.toString()
+            updateStr()
+
+        }catch(ex: NumberFormatException){
+            Toast.makeText(this, "Niepoprawny format ostatniej liczby na stosie, operacja anulowana!", Toast.LENGTH_LONG).show()
         }
 
-        stackText.text = wynik.toString()
-        stack.push(wynik)
+
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle?) {
