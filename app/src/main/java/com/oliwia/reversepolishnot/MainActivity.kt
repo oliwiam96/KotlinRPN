@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     val stack:Stack = Stack()
     var lastElem:String = ""
+    var colorInt:Int = android.graphics.Color.rgb(255, 255, 255)
 
     fun updateStr(){
         stackText.text = stack.strStack + lastElem
@@ -52,12 +53,14 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(i, REQUEST_CODE)
     }
 
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if((requestCode == REQUEST_CODE)
                 && (resultCode == Activity.RESULT_OK)){
             if(data != null){
-                if(data.hasExtra("returnString1")){
-                    //statusText.text = data.extras.getString("returnString1")
+                if(data.hasExtra("colorInt")){
+                    colorInt =  data.extras.getString("colorInt").toInt()
+                    stackText.setBackgroundColor(colorInt)
                 }
             }
         }
