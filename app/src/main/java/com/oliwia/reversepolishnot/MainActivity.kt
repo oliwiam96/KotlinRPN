@@ -48,10 +48,10 @@ class MainActivity : AppCompatActivity() {
             //stack = Stack(LinkedList<Double>(savedInstanceState.getDoubleArray("stackDouble").toList() as LinkedList<Double>),
             //        savedInstanceState.getInt("stackPrecision"))
 
-            /*
+
             stack =  savedInstanceState.getSerializable("stack") as Stack
             previousStack = savedInstanceState.getSerializable("previousStack") as Stack
-            */
+
 
             stackText.setBackgroundColor(colorInt)
             stack.precision = precision
@@ -272,10 +272,10 @@ class MainActivity : AppCompatActivity() {
         savedInstanceState!!.putString("previousLastElem", previousLastElem)
         savedInstanceState!!.putInt("precision", precision)
         savedInstanceState!!.putInt("colorInt", colorInt)
-        /*savedInstanceState!!.putSerializable("stack", stack)
-        savedInstanceState!!.putSerializable("previousStack", previousStack)*/
-        savedInstanceState!!.putDoubleArray("stackDouble", stack.stack.toDoubleArray())
-        savedInstanceState!!.putInt("stackPrecision", stack.precision)
+        savedInstanceState!!.putSerializable("stack", stack)
+        savedInstanceState!!.putSerializable("previousStack", previousStack)
+        //savedInstanceState!!.putDoubleArray("stackDouble", stack.stack.toDoubleArray())
+       // savedInstanceState!!.putInt("stackPrecision", stack.precision)
 
 
 

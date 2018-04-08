@@ -1,0 +1,1 @@
+Za tydzieñ wprowadzê jeszcze drobne poprawki.
