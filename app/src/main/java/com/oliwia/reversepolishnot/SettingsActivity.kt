@@ -28,7 +28,7 @@ class SettingsActivity : AppCompatActivity() {
         //Set the minimum value of NumberPicker
         numberPicker.minValue = 1
         //Specify the maximum value/number of NumberPicker
-        numberPicker.maxValue = 7
+        numberPicker.maxValue = 8
         //Gets whether the selector wheel wraps when reaching the min/max value.
         numberPicker.wrapSelectorWheel = true
         numberPicker.value = 4

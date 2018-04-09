@@ -6,16 +6,10 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
-import android.net.Uri
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
-import com.oliwia.reversepolishnot.R.menu.mymenu
-import java.io.Serializable
 import java.util.*
 
 
@@ -29,6 +23,8 @@ class MainActivity : AppCompatActivity() {
     var precision:Int = 4
     var previousStack: Stack = Stack(LinkedList<Double>(), 4)
     var previousLastElem: String = "0"
+    var lastButtonWasEnter = false
+    var lastButtonWasArithmeticOp = false
 
     fun updateStr(){
         stackText.text = stack.strStack + lastElem
@@ -46,17 +42,12 @@ class MainActivity : AppCompatActivity() {
             precision =savedInstanceState.getInt("precision") ?: 4
             stack =  savedInstanceState.getSerializable("stack") as Stack
             previousStack = savedInstanceState.getSerializable("previousStack") as Stack
-
-
+            lastButtonWasArithmeticOp = savedInstanceState.getBoolean("lastButtonWasArithmeticOp")
+            lastButtonWasEnter = savedInstanceState.getBoolean("lastButtonWasEnter")
             stackText.setBackgroundColor(colorInt)
-            stack.precision = precision
             updateStr()
-
-
-            //lastElem = "0" // UWAGA!  ODKOMENTOWAĆ
-        } else{
-            lastElem = "0"
         }
+
         updateStr()
     }
 
@@ -122,7 +113,7 @@ class MainActivity : AppCompatActivity() {
 
     fun swap(v: View){
         saveInstance()
-        stack.push(lastElem.toDouble()) // TODO wyjatek?
+        stack.push(lastElem.toDouble())
         stack.swap()
         lastElem = stack.pop().toString()
         updateStr()
@@ -154,9 +145,18 @@ class MainActivity : AppCompatActivity() {
 
 
     fun click(v: View){
-        // TODO C gdy -<nic>
         var newString = ""
+        if(lastButtonWasArithmeticOp){ // wrzuc wynik na stos (wyzej) i zacznij pisac od nowa
+            lastButtonWasArithmeticOp = false
+            this.push()
+            lastElem = "0"
+        }
+        if(lastButtonWasEnter){
+            lastButtonWasEnter = false
+            lastElem = "0"
+        }
         when(v.id){
+
             R.id.button0 -> newString = lastElem + "0"
             R.id.button1 -> newString = lastElem + "1"
             R.id.button2 -> newString = lastElem + "2"
@@ -185,10 +185,12 @@ class MainActivity : AppCompatActivity() {
         updateStr()
     }
 
-    // TODO funkcja, ktora bedzie probowala wrzucic na stos- uwzglednic -<nic>, -liczba
-    // TODO jak po enter nie ma enter/dzialania, tylko cyfra, to wykasowac stringa poprzedniego
+    fun pushEnter(v: View){
+        lastButtonWasEnter = true
+        push()
+    }
 
-    fun push(v: View){
+    fun push(){
         saveInstance()
         try{
             var number = lastElem.toDouble()
@@ -202,6 +204,7 @@ class MainActivity : AppCompatActivity() {
 
 
     fun sqrt(v: View){
+        lastButtonWasArithmeticOp = true
         saveInstance()
         try{
             var number = lastElem.toDouble()
@@ -223,6 +226,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun calTwoOperands(v: View){
+        lastButtonWasArithmeticOp = true
         saveInstance()
         try{
             var number = lastElem.toDouble()
@@ -265,7 +269,8 @@ class MainActivity : AppCompatActivity() {
         savedInstanceState!!.putInt("colorInt", colorInt)
         savedInstanceState!!.putSerializable("stack", stack)
         savedInstanceState!!.putSerializable("previousStack", previousStack)
-
+        savedInstanceState!!.putBoolean("lastButtonWasArithmeticOp", lastButtonWasArithmeticOp)
+        savedInstanceState!!.putBoolean("lastButtonWasEnter", lastButtonWasEnter)
 
     }
 }
