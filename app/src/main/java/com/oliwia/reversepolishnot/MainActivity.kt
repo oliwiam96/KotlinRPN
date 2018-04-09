@@ -21,10 +21,9 @@ class MainActivity : AppCompatActivity() {
     var lastElem:String = "0"
     var colorInt:Int = android.graphics.Color.rgb(255, 255, 255)
     var precision:Int = 4
-    var previousStack: Stack = Stack(LinkedList<Double>(), 4)
-    var previousLastElem: String = "0"
     var lastButtonWasEnter = false
     var lastButtonWasArithmeticOp = false
+    var stackHistory: StackHistory = StackHistory()
 
     fun updateStr(){
         stackText.text = stack.strStack + lastElem
@@ -37,13 +36,12 @@ class MainActivity : AppCompatActivity() {
         if(savedInstanceState!= null){
 
             lastElem =savedInstanceState.getString("lastElem") ?: "0"
-            previousLastElem =savedInstanceState.getString("previousLastElem") ?: "0"
             colorInt =savedInstanceState.getInt("colorInt") ?: android.graphics.Color.rgb(255, 255, 255)
             precision =savedInstanceState.getInt("precision") ?: 4
             stack =  savedInstanceState.getSerializable("stack") as Stack
-            previousStack = savedInstanceState.getSerializable("previousStack") as Stack
             lastButtonWasArithmeticOp = savedInstanceState.getBoolean("lastButtonWasArithmeticOp")
             lastButtonWasEnter = savedInstanceState.getBoolean("lastButtonWasEnter")
+            stackHistory = savedInstanceState.getSerializable("stackHistory") as StackHistory
             stackText.setBackgroundColor(colorInt)
             updateStr()
         }
@@ -117,6 +115,7 @@ class MainActivity : AppCompatActivity() {
             stack.swap()
             lastElem = stack.pop().toString()
             updateStr()
+            lastButtonWasArithmeticOp = true
         } catch(ex: TooFewArgumentsOnStack){
             Toast.makeText(this, "Za mało liczb na stosie, operacja anulowana!", Toast.LENGTH_LONG).show()
         }
@@ -140,14 +139,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun saveInstance(){
-        previousLastElem = lastElem
-        previousStack = stack.copy()
+        stackHistory.push(stack.copy(), "" + lastElem)
     }
 
     fun undo(v: View){
-        lastElem = previousLastElem
-        stack = previousStack
-        updateStr()
+        try{
+            lastElem = stackHistory.popLastElem()
+            stack = stackHistory.popStack()
+            updateStr()
+        } catch(ex: NoSuchElementException){
+            ; // nie mozna wiecej cofnac
+        }
     }
 
 
@@ -253,7 +255,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.buttonDIVIDE -> wynik = arg1/arg2
             }
             if(wynik.isNaN() || wynik.isInfinite()){
-                Toast.makeText(this, "Nie wolno dzielić przez 0! Operacja anulowana!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Niepoprawny format wyniku! Operacja anulowana!", Toast.LENGTH_LONG).show()
                 stack.push(arg1)
             } else{
                 lastElem = wynik.toString()
@@ -272,13 +274,11 @@ class MainActivity : AppCompatActivity() {
 
         super.onSaveInstanceState(savedInstanceState)
         savedInstanceState!!.putString("lastElem", lastElem)
-        savedInstanceState!!.putString("previousLastElem", previousLastElem)
         savedInstanceState!!.putInt("precision", precision)
         savedInstanceState!!.putInt("colorInt", colorInt)
         savedInstanceState!!.putSerializable("stack", stack)
-        savedInstanceState!!.putSerializable("previousStack", previousStack)
         savedInstanceState!!.putBoolean("lastButtonWasArithmeticOp", lastButtonWasArithmeticOp)
         savedInstanceState!!.putBoolean("lastButtonWasEnter", lastButtonWasEnter)
-
+        savedInstanceState!!.putSerializable("stackHistory", stackHistory)
     }
 }
