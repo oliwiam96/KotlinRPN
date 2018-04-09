@@ -91,7 +91,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Oliwia Masian\n127324", Toast.LENGTH_LONG).show()
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -112,16 +111,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun swap(v: View){
-        saveInstance()
-        stack.push(lastElem.toDouble())
-        stack.swap()
-        lastElem = stack.pop().toString()
-        updateStr()
+        try{
+            saveInstance()
+            stack.push(lastElem.toDouble())
+            stack.swap()
+            lastElem = stack.pop().toString()
+            updateStr()
+        } catch(ex: TooFewArgumentsOnStack){
+            Toast.makeText(this, "Za mało liczb na stosie, operacja anulowana!", Toast.LENGTH_LONG).show()
+        }
     }
 
     fun drop(v: View){
         saveInstance()
-        lastElem = stack.pop().toString()
+        try {
+            lastElem = stack.pop().toString()
+        }catch(ex: TooFewArgumentsOnStack){
+            lastElem = "0"
+        }
         updateStr()
     }
 
@@ -255,8 +262,9 @@ class MainActivity : AppCompatActivity() {
 
         }catch(ex: NumberFormatException){
             Toast.makeText(this, "Niepoprawny format ostatniej liczby na stosie, operacja anulowana!", Toast.LENGTH_LONG).show()
+        }catch(ex: TooFewArgumentsOnStack){
+            Toast.makeText(this, "Za mało liczb na stosie, operacja anulowana!", Toast.LENGTH_LONG).show()
         }
-
 
     }
 

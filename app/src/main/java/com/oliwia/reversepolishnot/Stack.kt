@@ -27,8 +27,7 @@ class Stack : Serializable{
                 if (stack.size >= i) {
                     strStack += (i + 1).toString() + ": " + "${stack[i-1].format(precision)}" + "\n"
                 } else {
-                    val zero = 0.0
-                    strStack += (i + 1).toString() + ": "+ "${zero.format(precision)}" + "\n"
+                    strStack += (i + 1).toString() + ": " + "\n"
                 }
             }
             strStack += "1: "
@@ -39,7 +38,7 @@ class Stack : Serializable{
         if (stack.size > 0) {
             return stack.pop()
         } else {
-            return 0.0
+            throw TooFewArgumentsOnStack("too few arguments to pop")
         }
     }
 
@@ -47,6 +46,7 @@ class Stack : Serializable{
         stack.push(elem)
     }
 
+    @Throws(TooFewArgumentsOnStack::class)
     fun swap(){
         var elem1 = this.pop()
         var elem2 = this.pop()
@@ -60,5 +60,8 @@ class Stack : Serializable{
 
     fun copy(stack: LinkedList<Double> = LinkedList<Double>(this.stack), precision: Int = this.precision) = Stack(stack, precision)
 
+    fun getSize():Int{
+        return stack.size
+    }
 
 }
