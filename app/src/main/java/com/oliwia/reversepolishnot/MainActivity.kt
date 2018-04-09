@@ -44,11 +44,6 @@ class MainActivity : AppCompatActivity() {
             previousLastElem =savedInstanceState.getString("previousLastElem") ?: "0"
             colorInt =savedInstanceState.getInt("colorInt") ?: android.graphics.Color.rgb(255, 255, 255)
             precision =savedInstanceState.getInt("precision") ?: 4
-
-            //stack = Stack(LinkedList<Double>(savedInstanceState.getDoubleArray("stackDouble").toList() as LinkedList<Double>),
-            //        savedInstanceState.getInt("stackPrecision"))
-
-
             stack =  savedInstanceState.getSerializable("stack") as Stack
             previousStack = savedInstanceState.getSerializable("previousStack") as Stack
 
@@ -263,10 +258,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(savedInstanceState: Bundle?) {
 
-        var stack:Stack = Stack(LinkedList<Double>(), 4)
-        var previousStack: Stack = Stack(LinkedList<Double>(), 4)
-
-
         super.onSaveInstanceState(savedInstanceState)
         savedInstanceState!!.putString("lastElem", lastElem)
         savedInstanceState!!.putString("previousLastElem", previousLastElem)
@@ -274,9 +265,6 @@ class MainActivity : AppCompatActivity() {
         savedInstanceState!!.putInt("colorInt", colorInt)
         savedInstanceState!!.putSerializable("stack", stack)
         savedInstanceState!!.putSerializable("previousStack", previousStack)
-        //savedInstanceState!!.putDoubleArray("stackDouble", stack.stack.toDoubleArray())
-       // savedInstanceState!!.putInt("stackPrecision", stack.precision)
-
 
 
     }
